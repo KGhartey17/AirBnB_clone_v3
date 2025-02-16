@@ -18,7 +18,7 @@ def single_amenities(amenity_id):
     """Retrieves an Amenity object"""
     obj = storage.get(Amenity, amenity_id)
     if not obj:
-        abort(404)
+        abort(404, description="Amenity not found")
     return jsonify(obj.to_dict())
 
 
@@ -27,9 +27,9 @@ def del_amenities(amenity_id):
     """Deletes an Amenity object and returns an empty dictionary"""
     obj = storage.get(Amenity, amenity_id)
     if not obj:
-        abort(404)
+        abort(404, description="Amenity not found")
 
-    storage.delete(obj)  # FIX: Correct way to delete an object
+    storage.delete(obj)
     storage.save()
     return make_response(jsonify({}), 200)
 
@@ -37,11 +37,18 @@ def del_amenities(amenity_id):
 @app_views.route('/amenities', methods=['POST'], strict_slashes=False)
 def post_amenity():
     """Creates a new Amenity and returns it with status code 201"""
-    new_amenity = request.get_json()
-    if not new_amenity:
+    try:
+        new_amenity = request.get_json()
+        if not isinstance(new_amenity, dict):
+            abort(400, "Not a JSON")
+    except Exception:
         abort(400, "Not a JSON")
+
     if 'name' not in new_amenity:
         abort(400, "Missing name")
+
+    if not isinstance(new_amenity['name'], str) or not new_amenity['name'].strip():
+        abort(400, "Invalid name")
 
     obj = Amenity(**new_amenity)
     storage.new(obj)
@@ -54,14 +61,19 @@ def put_amenity(amenity_id):
     """Updates an Amenity object and returns it"""
     obj = storage.get(Amenity, amenity_id)
     if not obj:
-        abort(404)
+        abort(404, description="Amenity not found")
 
-    req = request.get_json()
-    if not req:
+    try:
+        req = request.get_json()
+        if not isinstance(req, dict):
+            abort(400, "Not a JSON")
+    except Exception:
         abort(400, "Not a JSON")
 
     for k, v in req.items():
-        if k not in ['id', 'created_at', 'updated_at']:  # FIX: Corrected "update_at" to "updated_at"
+        if k not in ['id', 'created_at', 'updated_at']:
+            if k == 'name' and (not isinstance(v, str) or not v.strip()):
+                abort(400, "Invalid name")
             setattr(obj, k, v)
 
     storage.save()
