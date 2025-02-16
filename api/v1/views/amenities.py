@@ -13,7 +13,8 @@ def amenities():
     return jsonify([obj.to_dict() for obj in objs.values()])
 
 
-@app_views.route('/amenities/<amenity_id>', methods=['GET'], strict_slashes=False)
+@app_views.route('/amenities/<amenity_id>',
+                 methods=['GET'], strict_slashes=False)
 def single_amenities(amenity_id):
     """Retrieves an Amenity object"""
     obj = storage.get(Amenity, amenity_id)
@@ -22,7 +23,8 @@ def single_amenities(amenity_id):
     return jsonify(obj.to_dict())
 
 
-@app_views.route('/amenities/<amenity_id>', methods=['DELETE'], strict_slashes=False)
+@app_views.route('/amenities/<amenity_id>',
+                 methods=['DELETE'], strict_slashes=False)
 def del_amenities(amenity_id):
     """Deletes an Amenity object and returns an empty dictionary"""
     obj = storage.get(Amenity, amenity_id)
@@ -47,7 +49,9 @@ def post_amenity():
     if 'name' not in new_amenity:
         abort(400, "Missing name")
 
-    if not isinstance(new_amenity['name'], str) or not new_amenity['name'].strip():
+    if not isinstance(
+            new_amenity['name'],
+            str) or not new_amenity['name'].strip():
         abort(400, "Invalid name")
 
     obj = Amenity(**new_amenity)
@@ -56,7 +60,8 @@ def post_amenity():
     return make_response(jsonify(obj.to_dict()), 201)
 
 
-@app_views.route('/amenities/<amenity_id>', methods=['PUT'], strict_slashes=False)
+@app_views.route('/amenities/<amenity_id>',
+                 methods=['PUT'], strict_slashes=False)
 def put_amenity(amenity_id):
     """Updates an Amenity object and returns it"""
     obj = storage.get(Amenity, amenity_id)
