@@ -28,8 +28,10 @@ def single_city(city_id):
 
 @app_views.route('/cities/<city_id>', methods=['DELETE'], strict_slashes=False)
 def del_city(city_id):
-    """Deletes a City object and returns an 
-    empty dictionary with status code 200"""
+    """
+    Deletes a City object and returns an 
+    empty dictionary with status code 200
+    """
     obj = storage.get(City, city_id)
     if not obj:
         return make_response(jsonify({"error": "City not found"}), 404)
