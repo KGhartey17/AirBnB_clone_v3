@@ -7,62 +7,62 @@ from models.amenity import Amenity
 
 
 @app_views.route('/amenities', methods=['GET'], strict_slashes=False)
-def get_amenities():
+def amenities():
     """Retrieves the list of all Amenity objects"""
-    amenities = storage.all(Amenity).values()
-    return jsonify([amenity.to_dict() for amenity in amenities])
+    objs = storage.all(Amenity)
+    return jsonify([obj.to_dict() for obj in objs.values()])
 
 
 @app_views.route('/amenities/<amenity_id>', methods=['GET'], strict_slashes=False)
-def get_amenity(amenity_id):
-    """Retrieves a single Amenity object"""
-    amenity = storage.get(Amenity, amenity_id)
-    if not amenity:
+def single_amenities(amenity_id):
+    """Retrieves an Amenity object"""
+    obj = storage.get(Amenity, amenity_id)
+    if not obj:
         abort(404)
-    return jsonify(amenity.to_dict())
+    return jsonify(obj.to_dict())
 
 
 @app_views.route('/amenities/<amenity_id>', methods=['DELETE'], strict_slashes=False)
-def delete_amenity(amenity_id):
+def del_amenities(amenity_id):
     """Deletes an Amenity object and returns an empty dictionary"""
-    amenity = storage.get(Amenity, amenity_id)
-    if not amenity:
+    obj = storage.get(Amenity, amenity_id)
+    if not obj:
         abort(404)
 
-    storage.delete(amenity)
+    storage.delete(obj)  # FIX: Correct way to delete an object
     storage.save()
     return make_response(jsonify({}), 200)
 
 
 @app_views.route('/amenities', methods=['POST'], strict_slashes=False)
-def create_amenity():
+def post_amenity():
     """Creates a new Amenity and returns it with status code 201"""
-    amenity_data = request.get_json()
-    if not amenity_data:
+    new_amenity = request.get_json()
+    if not new_amenity:
         abort(400, "Not a JSON")
-    if 'name' not in amenity_data:
+    if 'name' not in new_amenity:
         abort(400, "Missing name")
 
-    new_amenity = Amenity(**amenity_data)
-    storage.new(new_amenity)
+    obj = Amenity(**new_amenity)
+    storage.new(obj)
     storage.save()
-    return make_response(jsonify(new_amenity.to_dict()), 201)
+    return make_response(jsonify(obj.to_dict()), 201)
 
 
 @app_views.route('/amenities/<amenity_id>', methods=['PUT'], strict_slashes=False)
-def update_amenity(amenity_id):
+def put_amenity(amenity_id):
     """Updates an Amenity object and returns it"""
-    amenity = storage.get(Amenity, amenity_id)
-    if not amenity:
+    obj = storage.get(Amenity, amenity_id)
+    if not obj:
         abort(404)
 
-    amenity_data = request.get_json()
-    if not amenity_data:
+    req = request.get_json()
+    if not req:
         abort(400, "Not a JSON")
 
-    for key, value in amenity_data.items():
-        if key not in ['id', 'created_at', 'updated_at']:
-            setattr(amenity, key, value)
+    for k, v in req.items():
+        if k not in ['id', 'created_at', 'updated_at']:  # FIX: Corrected "update_at" to "updated_at"
+            setattr(obj, k, v)
 
     storage.save()
-    return make_response(jsonify(amenity.to_dict()), 200)
+    return make_response(jsonify(obj.to_dict()), 200)
