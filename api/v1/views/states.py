@@ -21,7 +21,9 @@ def get_state(state_id):
     return jsonify(obj.to_dict())
 
 
-@app_views.route('/states/<state_id>', methods=['DELETE'], strict_slashes=False)
+@app_views.route('/states/<state_id>',
+                 methods=['DELETE'],
+                 strict_slashes=False)
 def delete_state(state_id):
     """Deletes a State object by ID"""
     obj = storage.get(State, state_id)
@@ -68,7 +70,8 @@ def update_state(state_id):
     ignored_keys = {'id', 'created_at', 'updated_at'}
 
     for key, value in req.items():
-        if key not in ignored_keys and isinstance(value, (str, int, float, bool)):
+        if key not in ignored_keys and isinstance(
+                value, (str, int, float, bool)):
             setattr(obj, key, value)
 
     storage.save()
