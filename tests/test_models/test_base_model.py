@@ -3,7 +3,7 @@
 from datetime import datetime
 import inspect
 import models
-import pep8 as pycodestyle
+import pycodestyle
 import time
 import unittest
 from unittest import mock
@@ -151,6 +151,7 @@ class TestBaseModel(unittest.TestCase):
         inst = BaseModel()
         old_created_at = inst.created_at
         old_updated_at = inst.updated_at
+        time.sleep(0.05)  # Add a small delay
         inst.save()
         new_created_at = inst.created_at
         new_updated_at = inst.updated_at
