@@ -62,7 +62,8 @@ class BaseModel:
         """Returns a dictionary containing all keys/values of the instance.
 
         Args:
-            include_password (bool): If True, includes the password in the dictionary.
+            include_password (bool): If True, 
+            includes the password in the dictionary.
         """
         new_dict = self.__dict__.copy()
         if "created_at" in new_dict:
