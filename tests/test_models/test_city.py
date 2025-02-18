@@ -7,10 +7,10 @@ from datetime import datetime
 import inspect
 import models
 from models import city
-import pycodestyle
-import unittest
 from models.base_model import BaseModel
-from models.city import City
+import pep8
+import unittest
+City = city.City
 
 
 class TestCityDocs(unittest.TestCase):
@@ -22,14 +22,14 @@ class TestCityDocs(unittest.TestCase):
 
     def test_pep8_conformance_city(self):
         """Test that models/city.py conforms to PEP8."""
-        pep8s = pycodestyle.StyleGuide(quiet=True)
+        pep8s = pep8.StyleGuide(quiet=True)
         result = pep8s.check_files(['models/city.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
 
     def test_pep8_conformance_test_city(self):
         """Test that tests/test_models/test_city.py conforms to PEP8."""
-        pep8s = pycodestyle.StyleGuide(quiet=True)
+        pep8s = pep8.StyleGuide(quiet=True)
         result = pep8s.check_files(['tests/test_models/test_city.py'])
         self.assertEqual(result.total_errors, 0,
                          "Found code style errors (and warnings).")
@@ -92,7 +92,7 @@ class TestCity(unittest.TestCase):
         self.assertEqual(type(new_d), dict)
         self.assertFalse("_sa_instance_state" in new_d)
         for attr in c.__dict__:
-            if attr != "_sa_instance_state":
+            if attr is not "_sa_instance_state":
                 self.assertTrue(attr in new_d)
         self.assertTrue("__class__" in new_d)
 
